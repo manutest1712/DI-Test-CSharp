@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ECCommon/ECCommon.csproj" />
+  <Project Path="ECInterfaces/ECInterfaces.csproj" />
+  <Project Path="EquipmentController/EquipmentController.csproj" />
+  <Project Path="StandardDevices/StandardDevices.csproj" />
+</Solution>
