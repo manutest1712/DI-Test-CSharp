@@ -43,6 +43,7 @@ namespace EquipmentController
             }
 
             Run();
+            Run();
         }
 
         [LogEntryExit]

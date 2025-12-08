@@ -1,6 +1,7 @@
 ﻿using MethodDecorator.Fody.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -12,25 +13,40 @@ namespace ECCommon
     {
         private ILogger _logger;
         private MethodBase _method;
+        private static readonly ConcurrentDictionary<Type, FieldInfo> _loggerFieldCache
+            = new ConcurrentDictionary<Type, FieldInfo>();
 
         public void Init(object instance, MethodBase method, object[] args)
         {
             _method = method;
 
-            // 1. Try to find logger from method arguments
-            foreach (var arg in args)
+            if (instance == null)
             {
-                if (arg is ILogger detectedLogger)
+                // 1. Try to find logger from method arguments
+                foreach (var arg in args)
                 {
-                    _logger = detectedLogger;
-                    return; // logger found, we are done
+                    if (arg is ILogger detectedLogger)
+                    {
+                        _logger = detectedLogger;
+                        return; // logger found, we are done
+                    }
                 }
             }
+            else
+            {
+                // ---------------------------------------------------
+                // 2. SLOW PATH → Get logger from instance._logger via cached reflection
+                // ---------------------------------------------------
 
-            _logger = (ILogger)instance
-                .GetType()
-                .GetField("_logger", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(instance);
+                var type = instance.GetType();
+
+                // Fetch cached or reflect once
+                var loggerField = _loggerFieldCache.GetOrAdd(type, t =>
+                    t.GetField("_logger", BindingFlags.Instance | BindingFlags.NonPublic)
+                );
+
+                _logger = loggerField?.GetValue(instance) as ILogger;
+            }
         }
 
         public void OnEntry()
