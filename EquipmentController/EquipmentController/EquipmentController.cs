@@ -49,8 +49,8 @@ namespace EquipmentController
         [LogEntryExit]
         public void Run()
         {
-            _logger.LogInformation(
-                "Controller {Controller} Method {Method} invoked.",
+            _logger.LogError(
+                "Controller {Controller} Method {Method} not implemented.",
                 nameof(EquipmentController),
                 nameof(Run));
         }
