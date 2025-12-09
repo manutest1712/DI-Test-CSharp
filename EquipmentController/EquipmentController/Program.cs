@@ -1,18 +1,29 @@
 ﻿using ECInterfaces.Devices;
 using ECInterfaces.Modules;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Scrutor;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
 var services = new ServiceCollection();
 
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
+
 services.AddLogging(builder =>
 {
-    builder.SetMinimumLevel(LogLevel.Information);
-    builder.AddConsole();
+    builder.ClearProviders();
+    builder.AddSerilog();   
 });
 
 //var assembly = Assembly.LoadFrom("StandardDevices.dll");
@@ -44,3 +55,5 @@ var provider = services.BuildServiceProvider();
 var module = provider.GetRequiredService<EquipmentController.EquipmentController>();
 
 Console.WriteLine("Finished.");
+
+Log.CloseAndFlush();
