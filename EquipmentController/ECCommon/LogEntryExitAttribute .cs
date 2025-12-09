@@ -51,17 +51,17 @@ namespace ECCommon
 
         public void OnEntry()
         {
-            _logger?.LogDebug($"Entering {_method.Name}");
+            _logger?.LogDebug("Entering method {MethodName}", _method.Name);
         }
 
         public void OnExit()
         {
-            _logger?.LogDebug($"Exiting {_method.Name}");
+            _logger?.LogDebug("Exiting method {MethodName}", _method.Name);
         }
 
         public void OnException(Exception exception)
         {
-            _logger?.LogError(exception, $"Exception in {_method.Name}");
+            _logger?.LogError(exception, "Exception in method {MethodName}", _method.Name);
         }
     }
 

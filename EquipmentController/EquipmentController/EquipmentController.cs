@@ -49,7 +49,10 @@ namespace EquipmentController
         [LogEntryExit]
         public void Run()
         {
-            _logger.LogInformation("EquipmentController.Run() invoked.");
+            _logger.LogInformation(
+                "Controller {Controller} Method {Method} invoked.",
+                nameof(EquipmentController),
+                nameof(Run));
         }
     }
 }
